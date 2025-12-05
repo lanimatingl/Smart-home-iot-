@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Home Dashboard</title>
+    <!-- CSS Framework for instant styling -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        /* Make the modules look like a grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        article { margin-bottom: 0; padding: 20px; }
+        .danger { color: #e74c3c; font-weight: bold; }
+        .safe { color: #2ecc71; font-weight: bold; }
+        .sensor-value { font-size: 2em; font-weight: bold; }
+    </style>
+</head>
+<body class="container">
+
+    <nav>
+        <ul>
+            <li><strong>🏠 Smart Home Control Center</strong></li>
+        </ul>
+        <ul>
+            <li>Status: <span id="connection-status" style="color:orange;">Connecting...</span></li>
+        </ul>
+    </nav>
+
+    <main class="dashboard-grid">
+
+        <!-- MODULE 1: SECURITY -->
+        <article>
+            <header>🛡️ 1. Security & Access</header>
+            <div class="grid">
+                <div>
+                    <small>Door Sensor</small>
+                    <div id="m1-door">--</div>
+                </div>
+                <div>
+                    <small>Motion Sensor</small>
+                    <div id="m1-motion">--</div>
+                </div>
+            </div>
+            <hr>
+            <label>Door Lock Control</label>
+            <div class="grid">
+                <button onclick="updateSecurity('doorLocked', true)">Lock 🔒</button>
+                <button onclick="updateSecurity('doorLocked', false)" class="secondary">Unlock 🔓</button>
+            </div>
+            <label style="margin-top:10px;">Alarm System</label>
+            <button onclick="updateSecurity('alarmSystemOn', true)" class="contrast">🚨 Arm Alarm</button>
+            <button onclick="updateSecurity('alarmSystemOn', false)" class="outline contrast">Disarm</button>
+        </article>
+
+        <!-- MODULE 2: LIGHTING -->
+        <article>
+            <header>💡 2. Smart Lighting</header>
+            <label>Main Light Brightness</label>
+            <input type="range" min="0" max="255" id="m2-slider" onchange="updateLighting('mainLightBrightness', this.value)">
+            
+            <label>RGB Mood Light</label>
+            <input type="color" id="m2-color" style="width:100%; height:40px;" onchange="updateLighting('rgbColorHex', this.value)">
+            
+            <label style="margin-top:10px;">
+                <input type="checkbox" onchange="updateLighting('rgbState', this.checked)">
+                RGB ON/OFF
+            </label>
+        </article>
+
+        <!-- MODULE 3: CLIMATE -->
+        <article>
+            <header>❄️ 3. Climate Control</header>
+            <div class="grid">
+                <div style="text-align:center;">
+                    <div class="sensor-value"><span id="m3-temp">--</span>°C</div>
+                    <small>Temperature</small>
+                </div>
+                <div style="text-align:center;">
+                    <div class="sensor-value"><span id="m3-hum">--</span>%</div>
+                    <small>Humidity</small>
+                </div>
+            </div>
+            <hr>
+            <label>Fan Speed Control</label>
+            <input type="range" min="0" max="255" onchange="updateClimate('fanSpeed', this.value)">
+        </article>
+
+        <!-- MODULE 4: FIRE & SAFETY -->
+        <article>
+            <header>🔥 4. Fire Safety</header>
+            <div class="grid">
+                <div>
+                    <small>Gas Level</small>
+                    <div id="m4-gas" class="sensor-value">--</div>
+                </div>
+                <div>
+                    <small>Flame Status</small>
+                    <div id="m4-flame">--</div>
+                </div>
+            </div>
+            <hr>
+            <label>Emergency Cutoff Relay</label>
+            <label>
+                <input type="checkbox" onchange="updateFire('emergencyRelay', this.checked)">
+                Activate Cutoff
+            </label>
+        </article>
+
+        <!-- MODULE 5: WATER -->
+        <article>
+            <header>💧 5. Water Management</header>
+            <div style="text-align:center; margin-bottom: 20px;">
+                <small>Water Level Distance</small>
+                <div class="sensor-value"><span id="m5-level">--</span> cm</div>
+            </div>
+            <button onclick="updateWater('pumpState', true)">Turn Pump ON 🌊</button>
+            <button onclick="updateWater('pumpState', false)" class="secondary outline">Turn Pump OFF</button>
+        </article>
+
+        <!-- MODULE 6: ENERGY -->
+        <article>
+            <header>⚡ 6. Energy Monitor</header>
+            <div class="grid">
+                <div style="text-align:center;">
+                    <div class="sensor-value"><span id="m6-amps">--</span> A</div>
+                    <small>Current Usage</small>
+                </div>
+                <div style="text-align:center;">
+                    <div class="sensor-value"><span id="m6-volt">--</span> V</div>
+                    <small>Battery Voltage</small>
+                </div>
+            </div>
+        </article>
+
+    </main>
+
+    <!-- FIREBASE SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
